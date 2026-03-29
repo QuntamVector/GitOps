@@ -1,7 +1,7 @@
 # HTTPS Security Architecture
 
 This document explains how HTTPS is implemented in this GitOps project using
-NGINX Ingress Controller, cert-manager, and Let's Encrypt for the domain `itkannadigaru.in`.
+NGINX Ingress Controller, cert-manager, and Let's Encrypt for the domain `quntamvector.in`.
 
 ---
 
@@ -21,7 +21,7 @@ NGINX Ingress Controller, cert-manager, and Let's Encrypt for the domain `itkann
 
 ## Overview
 
-When a user visits `https://itkannadigaru.in/login`, the request is:
+When a user visits `https://quntamvector.in/login`, the request is:
 
 1. **Encrypted** end-to-end between the browser and the NGINX Ingress Controller
 2. **Routed** by NGINX to the correct internal service
@@ -39,7 +39,7 @@ The TLS certificate that enables HTTPS is automatically issued and renewed by
 │                          OUTSIDE CLUSTER                                │
 │                                                                         │
 │   User Browser                                                          │
-│   https://itkannadigaru.in/login                                        │
+│   https://quntamvector.in/login                                        │
 │          │                                                              │
 │          │  HTTPS (port 443) — encrypted with TLS certificate           │
 │          ▼                                                              │
@@ -54,7 +54,7 @@ The TLS certificate that enables HTTPS is automatically issued and renewed by
 │          ▼                                                              │
 │   NGINX Ingress Controller Pod                                          │
 │   ┌─────────────────────────────────────────────────┐                  │
-│   │  1. Matches host: itkannadigaru.in               │                  │
+│   │  1. Matches host: quntamvector.in               │                  │
 │   │  2. Loads certificate from secret: frontend-tls  │                  │
 │   │  3. Terminates TLS (decrypts HTTPS → HTTP)       │                  │
 │   │  4. Checks ssl-redirect: if HTTP → redirect 443  │                  │
@@ -121,14 +121,14 @@ spec:
 
 ### How Let's Encrypt HTTP-01 Challenge Works
 
-This is how Let's Encrypt verifies you own `itkannadigaru.in` before issuing a certificate:
+This is how Let's Encrypt verifies you own `quntamvector.in` before issuing a certificate:
 
 ```
 Step 1: cert-manager contacts Let's Encrypt
-        "I want a certificate for itkannadigaru.in"
+        "I want a certificate for quntamvector.in"
 
 Step 2: Let's Encrypt responds with a challenge
-        "Place this token at: http://itkannadigaru.in/.well-known/acme-challenge/<random-token>"
+        "Place this token at: http://quntamvector.in/.well-known/acme-challenge/<random-token>"
 
 Step 3: cert-manager creates a temporary Ingress rule and pod
         that serves the token at that URL path
@@ -170,10 +170,10 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - itkannadigaru.in
+    - quntamvector.in
     secretName: frontend-tls
   rules:
-  - host: itkannadigaru.in
+  - host: quntamvector.in
     http:
       paths:
       - path: /
@@ -189,7 +189,7 @@ spec:
 
 | Annotation | What it Does |
 |---|---|
-| `ssl-redirect: "true"` | Any request to `http://itkannadigaru.in` is automatically redirected to `https://itkannadigaru.in` with HTTP 308 |
+| `ssl-redirect: "true"` | Any request to `http://quntamvector.in` is automatically redirected to `https://quntamvector.in` with HTTP 308 |
 | `cert-manager.io/cluster-issuer: letsencrypt-prod` | Tells cert-manager to watch this Ingress and issue a certificate using the `letsencrypt-prod` ClusterIssuer |
 
 ### Spec Explanation
@@ -197,9 +197,9 @@ spec:
 | Field | What it Does |
 |---|---|
 | `ingressClassName: nginx` | Targets the NGINX Ingress Controller specifically |
-| `tls.hosts` | Declares that `itkannadigaru.in` must be served over HTTPS |
+| `tls.hosts` | Declares that `quntamvector.in` must be served over HTTPS |
 | `tls.secretName: frontend-tls` | NGINX loads the certificate from this Kubernetes secret to encrypt traffic |
-| `rules.host` | NGINX only processes requests where the HTTP Host header matches `itkannadigaru.in` — all other domains are rejected |
+| `rules.host` | NGINX only processes requests where the HTTP Host header matches `quntamvector.in` — all other domains are rejected |
 | `path: /` with `pathType: Prefix` | All URL paths (`/login`, `/cart`, `/checkout` etc.) are routed to the frontend service |
 | `backend.service.port: 80` | After TLS termination, NGINX forwards plain HTTP to the frontend ClusterIP service on port 80 |
 
@@ -214,7 +214,7 @@ spec:
 
 ### Layer 2 — Forced HTTPS
 - `ssl-redirect: "true"` ensures no user ever accidentally uses plain HTTP
-- Even if someone types `http://itkannadigaru.in`, they are immediately redirected to HTTPS
+- Even if someone types `http://quntamvector.in`, they are immediately redirected to HTTPS
 - Prevents accidental exposure of sensitive data over unencrypted connections
 
 ### Layer 3 — Trusted Certificate Authority
@@ -228,7 +228,7 @@ spec:
 - Attack surface is minimised to a single controlled entry point
 
 ### Layer 5 — Domain Validation
-- The `host: itkannadigaru.in` rule means NGINX rejects requests for any other domain
+- The `host: quntamvector.in` rule means NGINX rejects requests for any other domain
 - Prevents host header injection attacks
 
 ### Layer 6 — Automatic Certificate Renewal
@@ -321,7 +321,7 @@ Verify your domain A/CNAME record:
 kubectl get svc -n ingress-nginx ingress-nginx-controller
 
 # Check DNS resolution
-nslookup itkannadigaru.in
+nslookup quntamvector.in
 ```
 
 The IP/CNAME from the first command must match what `nslookup` returns.

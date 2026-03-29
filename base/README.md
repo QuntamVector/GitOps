@@ -8,7 +8,7 @@ External traffic is served over **HTTPS** via NGINX Ingress + cert-manager (Let'
 ## Prerequisites
 
 - A Kubernetes cluster with `kubectl` access
-- Domain `itkannadigaru.in` DNS A record pointing to your cluster's external IP
+- Domain `quntamvector.in` DNS A record pointing to your cluster's external IP
 - NGINX Ingress Controller installed (Step 1 below)
 
 ---
@@ -33,7 +33,7 @@ Get the external IP assigned to the NGINX controller — you will need this for 
 kubectl get svc -n ingress-nginx ingress-nginx-controller
 ```
 
-> Point your domain `itkannadigaru.in` A record to the `EXTERNAL-IP` shown above before continuing.
+> Point your domain `quntamvector.in` A record to the `EXTERNAL-IP` shown above before continuing.
 
 ---
 
@@ -66,7 +66,7 @@ kubectl apply -k base/
 ```
 
 > **Note:** The ClusterIssuer (`letsencrypt-prod`) is included in the base manifests.
-> cert-manager will automatically provision a TLS certificate for `itkannadigaru.in`.
+> cert-manager will automatically provision a TLS certificate for `quntamvector.in`.
 
 ---
 
@@ -96,7 +96,7 @@ kubectl describe challenge
 kubectl get ingress frontend-ingress
 ```
 
-Once `ADDRESS` is populated, open `https://itkannadigaru.in` in your browser.
+Once `ADDRESS` is populated, open `https://quntamvector.in` in your browser.
 
 ---
 
