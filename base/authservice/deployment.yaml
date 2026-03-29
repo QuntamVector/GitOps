@@ -14,7 +14,7 @@ spec:
       labels:
         app: authservice
     spec:
-      serviceAccountName: authservice
+      serviceAccountName: authservice-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
